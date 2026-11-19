@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from 'express'
-import { Pool } from 'pg'
+import { Pool, Result } from 'pg'
 const app: Application = express()
 const port = 5000
 const pool = new Pool({
@@ -76,7 +76,25 @@ app.get("/api/v1/users", async (req: Request, res: Response) => {
         console.log(error)
     }
 }
-)
+);
+
+app.get("/api/v1/users/:id", async (req: Request, res: Response) => {
+    try {
+       const { id } = req.params;
+       const result = await pool.query(
+        `SELECT * FROM users WHERE id = $1;`,
+        [id]
+       ) 
+       console.log(result)
+       res.status(200).json({
+            success: true,
+            message: 'User retrieved successfully!',
+            data: result.rows[0],
+        })
+    } catch(error : any) {
+        console.log(error)
+    }
+});
 
 
 app.listen(port, () => {
