@@ -96,6 +96,25 @@ app.get("/api/v1/users/:id", async (req: Request, res: Response) => {
     }
 });
 
+app.put("/api/v1/users/:id", async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const { name, email, password, age } = req.body;
+
+        const result = await pool.query(
+            `UPDATE users SET name = $1, email = $2, password = $3, age = $4 WHERE id = $5 RETURNING *;`,
+            [name, email, password, age, id]
+        );
+        console.log(result);
+        res.status(200).json({
+            success: true,
+            message: 'User updated successfully!',
+            data: result.rows[0],
+        });
+    } catch (error : any) {
+        console.log(error);
+    }
+});
 
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
