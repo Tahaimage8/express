@@ -116,6 +116,26 @@ app.put("/api/v1/users/:id", async (req: Request, res: Response) => {
     }
 });
 
+
+app.delete("/api/v1/users/:id", async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        const result = await pool.query(
+            `DELETE FROM users WHERE id = $1 RETURNING *;`,
+            [id]
+        );
+        console.log(result);
+        res.status(200).json({
+            success: true,
+            message: 'User deleted successfully!',
+            data: result.rows[0],
+        });
+    } catch (error : any) {
+        console.log(error);
+    }
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
