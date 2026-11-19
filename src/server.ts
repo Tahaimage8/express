@@ -32,15 +32,7 @@ const initDB = async ()=>{
     }
 }
 
-
 initDB()
-
-
-
-
-
-
-
 
 
 app.get('/', (req: Request, res: Response) => {
@@ -67,6 +59,26 @@ app.post("/api/v1/users", async (req: Request, res: Response) => {
         data: result.rows[0],
     })
 })
+app.get("/api/v1/users", async (req: Request, res: Response) => {
+
+    try {
+        const result = await pool.query(`
+            SELECT * FROM users;
+        `)
+        console.log(result)
+        res.status(200).json({
+            success: true,
+            message: 'Users retrieved successfully!',
+            data: result.rows,
+        })
+
+    } catch (error : any) {
+        console.log(error)
+    }
+}
+)
+
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
